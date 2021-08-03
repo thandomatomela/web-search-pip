@@ -1,0 +1,17 @@
+FROM mysql 
+
+
+RUN echo [mysql] >> ~/.my.cnf
+RUN echo user=root >> ~/.my.cnf
+RUN echo password=password >> ~/.my.cnf
+
+RUN chmod 0600 ~/.my.cnf
+
+COPY db.sql .
+COPY import-db.sh .
+
+
+
+EXPOSE 3306 33060 33061
+CMD ["mysqld"]
+

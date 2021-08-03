@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: database 
+  labels:
+    app: database
+spec:
+  containers:
+   - name: mysql
+     image: thandomatomela/mysql-image:84
+     env:
+      # Use secret in real life
+      - name: MYSQL_ROOT_PASSWORD
+        value: password
+      - name: MYSQL_DATABASE
+        value: web-search-db 
+     args: ["--default-authentication-plugin=mysql_native_password"]
+#     command: [ "mysql -u root web-search-db < db.sql"]
+#     lifecycle:
+#       postStart:
+#         exec:
+#           command: ['mysql','uroot', 'web-search-db < db.sql']
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-connect
+spec:
+  selector:
+    matchLabels:
+      app: db-connect
+  replicas: 1
+  template: # template for the pods
+    metadata:
+      labels:
+        app: db-connect
+    spec:
+      containers:
+      - name: db-connect
+        image: drupal
+#       env:
+#        - name: SPRING_PROFILES_ACTIVE
+#          value: production-microservice
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-search
+spec:
+  selector:
+    matchLabels:
+      app: web-search
+  replicas: 1
+  template: # template for the pods
+    metadata:
+      labels:
+        app: web-search
+    spec:
+      containers:
+      - name: web-search
+        image: thandomatomela/web-search:82
+#       env:
+#        - name: SPRING_PROFILES_ACTIVE
+#          value: production-microservice
+
+
